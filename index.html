@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>❤️ 세상에서 제일 사랑하는 엄마를 위한 선물 ❤️</title>
+    <!-- 폭죽 효과를 위한 라이브러리 -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #ff6b81;
+            --bg-color: #fff0f3;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+        }
+
+        body {
+            font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        /* 🎁 앱 시작 화면 (오프닝 커버) 스타일 */
+        #welcome-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #ff6b81, #ff94a8);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            box-sizing: border-box;
+            transition: opacity 0.6s ease, visibility 0.6s ease;
+        }
+
+        #welcome-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .welcome-box {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            padding: 40px 30px;
+            border-radius: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            max-width: 400px;
+            width: 100%;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .welcome-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        .welcome-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .welcome-desc {
+            font-size: 1rem;
+            margin-bottom: 30px;
+            opacity: 0.9;
+            line-height: 1.4;
+        }
+
+        .open-btn {
+            background-color: white;
+            color: var(--primary-color);
+            border: none;
+            padding: 15px 30px;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            transition: transform 0.2s, background-color 0.2s;
+        }
+
+        .open-btn:hover {
+            transform: scale(1.05);
+            background-color: #fff5f7;
+        }
+
+        /* 본문 스타일 */
+        .container {
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+
+        header h1 {
+            color: var(--primary-color);
+            font-size: 2rem;
+            margin-bottom: 5px;
+        }
+
+        header p {
+            color: #666;
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+        }
+
+        /* 편지 섹션 */
+        .letter-box {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(255, 107, 129, 0.15);
+            margin-bottom: 30px;
+            text-align: left;
+            line-height: 1.6;
+        }
+
+        .letter-box h2 {
+            color: var(--primary-color);
+            font-size: 1.3rem;
+            margin-top: 0;
+            text-align: center;
+        }
+
+        /* 쿠폰 섹션 */
+        .coupon-section h2 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .coupon-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .coupon {
+            background: var(--card-bg);
+            border: 2px dashed var(--primary-color);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s;
+            position: relative;
+            overflow: hidden;
+            text-align: left;
+        }
+
+        .coupon:hover {
+            transform: scale(1.02);
+            background-color: #fff9fa;
+        }
+
+        .coupon-content h3 {
+            margin: 0 0 5px 0;
+            font-size: 1.2rem;
+            color: #333;
+        }
+
+        .coupon-content p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: #777;
+        }
+
+        .use-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            flex-shrink: 0;
+            margin-left: 10px;
+        }
+
+        .use-btn:hover {
+            background-color: #ff4757;
+        }
+
+        /* 사용 완료된 쿠폰 스타일 */
+        .coupon.used {
+            border-color: #ccc;
+            background-color: #f1f1f1;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .coupon.used .coupon-content h3,
+        .coupon.used .coupon-content p {
+            color: #999;
+            text-decoration: line-through;
+        }
+
+        .coupon.used .use-btn {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* ✨ 예쁜 커스텀 팝업 (모달) 스타일 */
+        #custom-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        #custom-modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px 25px;
+            border-radius: 20px;
+            width: 85%;
+            max-width: 350px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            transform: scale(0.8);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        #custom-modal.show .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-icon {
+            font-size: 3.5rem;
+            margin-bottom: 15px;
+        }
+
+        .modal-title {
+            color: var(--primary-color);
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .modal-desc {
+            color: #666;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 25px;
+        }
+
+        .modal-close-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .modal-close-btn:hover {
+            background-color: #ff4757;
+        }
+
+        footer {
+            margin-top: 40px;
+            color: #888;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 🎁 앱 시작 화면 (오프닝 커버) -->
+    <div id="welcome-screen">
+        <div class="welcome-box">
+            <div class="welcome-icon">🎁</div>
+            <div class="welcome-title">엄마를 위한 특별한 선물</div>
+            <div class="welcome-desc">큰딸 하진이가 준비한<br>세상에 하나뿐인 앱이 도착했어요!</div>
+            <button class="open-btn" onclick="openApp()">선물 열어보기 💖</button>
+        </div>
+    </div>
+
+    <!-- ✨ 이쁜 커스텀 팝업 창 -->
+    <div id="custom-modal">
+        <div class="modal-content">
+            <div class="modal-icon">🎉</div>
+            <div class="modal-title">쿠폰 사용 완료!</div>
+            <div class="modal-desc" id="modal-text">쿠폰이 성공적으로 사용되었습니다!<br>이 화면을 캡쳐해서 큰딸에게 보여주세요 😆</div>
+            <button class="modal-close-btn" onclick="closeModal()">확인</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- 헤더 -->
+        <header>
+            <h1>🎉 Happy Birthday Mom! 🎉</h1>
+            <p>엄마 생신 축하드려요! 이 페이지는 엄마만을 위한 공간 ❤️</p>
+        </header>
+
+        <!-- 편지 섹션 -->
+        <section class="letter-box">
+            <h2>세상에서 가장 근사한 우리 엄마께</h2>
+            <p>
+                사랑하는 엄마, 큰 딸 하진이에요 :)<br>
+                생신 축하드려요! 항상 키워주시고 먹여주셔서 감사해요.<br>
+                엄마 딸로 태어나서 얼마나 기쁜지 몰라요.<br><br>
+                미역국 못 끓여드려서 죄송해요 😭 대신 내년에 꼭! 장인 뺨치는 미역국으로 돌아올게요 ㅎㅎ<br>
+                오래오래 만수무강 하세요, 세상에서 가장 사랑합니다 💗
+            </p>
+        </section>
+
+        <!-- 쿠폰 섹션 -->
+        <section class="coupon-section">
+            <h2>🎟️ Only 엄마만 사용 가능한 쿠폰! (클릭해서 사용하기)</h2>
+            <div class="coupon-grid">
+                
+                <div class="coupon" onclick="useCoupon(this)">
+                    <div class="coupon-content">
+                        <h3>💆‍♀️ 전신 안마 & 어깨 마사지 1회권</h3>
+                        <p>김씨 집안 가장에게도 인정받은 큰딸의 시원한 안마! 필요할 때 언제든 사용 가능</p>
+                    </div>
+                    <button class="use-btn">사용하기</button>
+                </div>
+
+                <div class="coupon" onclick="useCoupon(this)">
+                    <div class="coupon-content">
+                        <h3>🍽️ 큰딸이 대접하는 맛있는 아침식사</h3>
+                        <p>평소 아침을 안 먹더라도 기분 내고 싶은 오늘! 이 쿠폰을 사용하세요 :) </p>
+                    </div>
+                    <button class="use-btn">사용하기</button>
+                </div>
+
+                <div class="coupon" onclick="useCoupon(this)">
+                    <div class="coupon-content">
+                        <h3>✈️ 카페인이 딸리는 날 아메리카노 한 잔</h3>
+                        <p>스타벅스, 컴포즈, 빽다방... 세상의 모든 커피란 커피는 다 구해드립니다 😍 </p>
+                    </div>
+                    <button class="use-btn">사용하기</button>
+                </div>
+
+                <div class="coupon" onclick="useCoupon(this)">
+                    <div class="coupon-content">
+                        <h3>💰 겨울엔 붕어빵! 엄마가 좋아하는 팥붕 배달 </h3>
+                        <p>숨은 맛집으로 소문난 붕어빵 트럭에서 팥 붕어빵 10개를 배달해드려요 🤩</p>
+                    </div>
+                    <button class="use-btn">사용하기</button>
+                </div>
+
+            </div>
+        </section>
+
+        <footer>
+            <p>Made with ❤️ by 엄마를 사랑하는 큰딸 하진</p>
+        </footer>
+    </div>
+
+    <script>
+        // 앱 열기 버튼 함수
+        function openApp() {
+            const screen = document.getElementById('welcome-screen');
+            screen.classList.add('hidden');
+
+            // 첫 화면 열릴 때 축하 폭죽 팡팡 터뜨리기!
+            confetti({
+                particleCount: 150,
+                spread: 80,
+                origin: { y: 0.5 }
+            });
+        }
+
+        // 쿠폰 사용 함수
+        function useCoupon(element) {
+            // 이미 사용된 쿠폰이면 다른 안내 팝업 띄우기
+            if (element.classList.contains('used')) {
+                showModal('이미 사용된 쿠폰이에요! 🤭', '이 쿠폰은 이미 쓰셨어요!<br>혹시 까먹으신 건 아니겠죠? 대만족 중이신가요? ❤️️');
+                return;
+            }
+
+            // 사용 완료 상태로 변경
+            element.classList.add('used');
+            const btn = element.querySelector('.use-btn');
+            btn.textContent = '사용 완료!';
+
+            // 폭죽 효과 실행
+            confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { y: 0.6 }
+            });
+
+            // 예쁜 커스텀 팝업 띄우기
+            showModal('쿠폰 사용 완료! 🎉', '쿠폰이 성공적으로 사용되었습니다!<br>이 화면을 캡쳐해서 큰딸 하진이에게 즉시 요구하세요! 🏃‍♀️💨');
+        }
+
+        // 모달 팝업 열기
+        function showModal(title, desc) {
+            document.querySelector('.modal-title').textContent = title;
+            document.getElementById('modal-text').innerHTML = desc;
+            document.getElementById('custom-modal').classList.add('show');
+        }
+
+        // 모달 팝업 닫기
+        function closeModal() {
+            document.getElementById('custom-modal').classList.remove('show');
+        }
+    </script>
+
+</body>
+</html>
